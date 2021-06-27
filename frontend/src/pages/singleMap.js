@@ -38,7 +38,6 @@ export class SingleMap extends Component {
                 this.setState({
                     isLoaded: true,
                     map: result.result,
-                    category_id: result.result.categories[0].id
                 }, () => {
                     this.init();
                 });
@@ -66,8 +65,9 @@ export class SingleMap extends Component {
         return {'x': imgX, 'y': imgY};
     }
 
-
     initPoints = () => {
+        // document.querySelectorAll(".point").forEach(e => e.remove());​
+
         var points = this.state.map.points;
         var image = document.getElementById("map-image");
 
@@ -76,11 +76,16 @@ export class SingleMap extends Component {
 
             block.innerHTML = item.number;
             block.className = 'point'
-            block.style.top = `${image.offsetTop + item.y}px`;
-            block.style.left = `${image.offsetLeft + item.x}px`;
+
+            block.dataset.name = item.name.toLowerCase();
+            block.dataset.description = item.description.toLowerCase();
+            block.dataset.category = item.category_name.toLowerCase();
+
+            block.style.top = `${image.offsetTop + item.y * image.clientHeight}px`;
+            block.style.left = `${image.offsetLeft + item.x * image.clientWidth}px`;
 
             block.onclick = (e) => {
-                this.notify(`id: ${item.id} \n name: ${item.name} \n description: ${item.description}`);
+                this.notify(`${item.name} : ${item.description}`);
                 console.log(this.state.id);
             };
 
@@ -102,9 +107,10 @@ export class SingleMap extends Component {
             var imgY = Math.round(domY * ratioY);
             
             var formDiv = document.getElementById('pointAdder');
+
             formDiv.style.display = 'flex';
-            formDiv.style.top = `${imgY}px`;
-            formDiv.style.left = `${imgX}px`;
+            formDiv.style.top = `${e.pageY}px`;
+            formDiv.style.left = `${e.pageX}px`;
             
             this.setState({
                 'imgX': imgX,
@@ -115,10 +121,11 @@ export class SingleMap extends Component {
         this.initPoints();
     }
 
-    _handleSubmit(event) {
+    _handleSubmit = (event) => {
+        var mymap = document.getElementById('map-image');
+
         const state = this.state;
         const csrftoken = document.getElementsByName("csrfmiddlewaretoken");
-        console.log(csrftoken);
 
         const requestOptions = {
             method: 'PUT',
@@ -130,16 +137,14 @@ export class SingleMap extends Component {
             body: JSON.stringify(
                 {
                     map_id     : state.id,
-                    x          : state.imgX,
-                    y          : state.imgY,
+                    x          : state.imgX / mymap.naturalWidth,
+                    y          : state.imgY / mymap.naturalHeight,
                     number     : state.number,
                     name       : state.name,
                     description: state.description,
-                    category_id: state.category_id,
+                    category_id: state.category_id != null ? state.category_id : state.map.categories[0].id,
                 })};
-        
-        console.log(this.state)
-
+    
         fetch(`http://127.0.0.1:8000/api/add_point/${state.id}`, requestOptions)
             .then(response => response.json())
         
@@ -159,6 +164,20 @@ export class SingleMap extends Component {
 
         console.log(this.state);
     }
+
+    _filterPoints(event) {
+        const target = event.target;
+        const value = target.value.toLowerCase();
+
+        document.querySelectorAll('.point').forEach(e => {
+            if(e.dataset.name.includes(value) || e.dataset.description.includes(value)) {
+                e.style.display = 'flex';
+            }else {
+                e.style.display = 'none';
+            }
+        });
+        
+    }
     
     render() {
         if(this.state.error) {
@@ -168,8 +187,14 @@ export class SingleMap extends Component {
         }else {
             return (
                 <div>
-                    <p>{this.state.map.name}</p>
-                    <img src={`http://127.0.0.1:8000${this.state.map.photo}`} id="map-image"/>
+                    <h2>Карта {this.state.map.name}</h2>
+                    
+                    <div className="search-form-container">
+                        <input className="search-form-input" id="search-form-input" type="text" placeholder="Введите название или примерное описание" onChange={this._filterPoints}/>
+                        <label className="search-form-icon" for="search-form-input" style={{backgroundImage: 'url("http://127.0.0.1:8000/static/img/Button-M-Search-ic.svg")'}} />
+                    </div><br></br>
+
+                    <img style={{width: '100%'}}src={`http://127.0.0.1:8000${this.state.map.photo}`} id="map-image"/>
 
                     <ToastContainer />
 
@@ -179,7 +204,7 @@ export class SingleMap extends Component {
                             <input type="text" name="name" id="name" placeholder="Название" onChange={this._handleInputChange} required />
                             <input type="text" name="description" id="description" placeholder="Описание" onChange={this._handleInputChange} required />
 
-                            <select name="category_id" onChange={this._handleInputChange}>
+                            <select name="category_id" onChange={this._handleInputChange} required>
                                 {this.state.map.categories.map((json) => <option value={json.id} key={json.id}> 
                                     {json.name}
                                 </option>)}

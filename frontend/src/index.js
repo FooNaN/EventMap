@@ -6,7 +6,7 @@ import reportWebVitals from './reportWebVitals';
 
 ReactDOM.render(
   <React.StrictMode>
-    <App />
+    <App host="http://127.0.0.1:8000"/>
   </React.StrictMode>,
   document.getElementById('root')
 );
