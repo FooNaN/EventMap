@@ -1,0 +1,120 @@
+.search-form-container {
+    margin-top: 20px;
+    position: relative;
+    width: 70%;
+}
+
+.search-form-input {
+    padding: 18px 31px;
+    border: 1px solid #3949E7;
+    box-sizing: border-box;
+    border-radius: 32.5px;
+    width: 100%;
+}
+
+.search-form-icon {
+    position: absolute;
+    top: 6px;
+    right: 7px;
+    background-image: "url('/static/img/Button-M-Search-ic.svg')";
+    background-repeat: no-repeat;
+    background-attachment: scroll;
+    height: 40px;
+    width: 40px;
+    z-index: 100;
+}
+
+.search-form-icon:hover {
+    cursor: pointer;
+    opacity: 0.8;
+}
+
+.search-settings {
+    margin-top: 58px;
+}
+
+.news-count-input {
+    padding: 6px 12px;
+    width: 64px;
+    height: 32px;
+}
+
+.news_list {
+    margin-top: 47px;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    grid-column-gap: 33px;
+    grid-row-gap: 50px;
+}
+
+.news-pagination {
+    margin-top: 32px;
+    justify-content: center;
+    column-gap: 16px;
+}
+
+.news-pagination div {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    border: 1px solid #DFE3FA;
+    box-sizing: border-box;
+    border-radius: 2px;
+    height: 32px;
+    width: 32px;
+}
+
+.news-pagination div:hover {
+    cursor: pointer;
+}
+
+.news-pagination .pagination-page-active {
+    background-color: #3951E3;
+    color: white;
+}
+
+.bad_request_section .error_hint {
+    font-family: Open Sans;
+    font-style: normal;
+    font-weight: normal;
+    font-size: 18px;
+    line-height: 28px;
+
+    letter-spacing: 0.0016px;
+
+    color: #C4C4C4;
+}
+
+.bad_request_section .news_tag_list {
+    width: 50%;
+    margin: 0 auto;
+    justify-content: center;
+}
+
+@media screen and (max-width: 1383px) {
+    .news_list {
+        grid-column-gap: 10px;
+        grid-row-gap: 20px;
+    }
+}
+
+@media screen and (max-width: 1317px) {
+    .news_list {
+        grid-template-columns: 1fr 1fr;
+    }
+}
+
+@media screen and (max-width: 888px) {
+    .news_list {
+        grid-template-columns: 1fr;
+    }
+
+    .image_opacity_color {
+        height: 100px;
+    }
+
+    .search-form-container {
+        width: 100%;
+    }
+}
